@@ -88,9 +88,9 @@ export function NetworkGuard() {
 
   if (down) return (
     <LogoLoader text="Menghubungkan kembali..." sub="Jaringan tidak dapat diakses atau sangat lambat. Aplikasi akan lanjut otomatis begitu koneksi kembali.">
-      <button className="btn mt-2" onClick={ping}>Coba lagi</button>
+      <button className="btn mt-2 !bg-white/15" onClick={ping}>Coba lagi</button>
     </LogoLoader>
   )
-  if (slow) return <div className="slide-down fixed inset-x-0 top-0 z-50 bg-acc px-4 py-2 text-center text-xs font-bold text-accfg">Koneksi internet lambat, proses mungkin memakan waktu lebih lama.</div>
+  if (slow) return <div className="slide-down fixed inset-x-0 top-0 z-50 bg-amber-500 px-4 py-2 text-center text-xs font-bold text-black">Koneksi internet lambat, proses mungkin memakan waktu lebih lama.</div>
   return null
 }

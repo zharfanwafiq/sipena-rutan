@@ -136,7 +136,7 @@ export default function App() {
               className={'flex items-center gap-3 whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold transition-all duration-300 md:!translate-x-0 md:!opacity-100 ' +
                 (n[0] === 'riwayat' ? 'max-md:hidden ' : '') +   // di HP, Riwayat dipindah ke ikon kanan atas
                 (drawer ? 'translate-x-0 opacity-100 ' : '-translate-x-4 opacity-0 ') +
-                (cur[0] === n[0] ? 'bg-acc text-accfg' : 'text-white/75 hover:bg-white/10')}>
+                (cur[0] === n[0] ? 'bg-white/15 text-white' : 'text-white/75 hover:bg-white/10')}>
               <Ic n={n[2]} s={18} />{n[1]}
             </button>
           ))}

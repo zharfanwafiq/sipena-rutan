@@ -29,11 +29,7 @@ export default function KlasifikasiPicker({ onChange }) {
       <F l="Kode Klasifikasi Arsip – Kategori *">
         <select className="inp" value={l1} onChange={(e) => pick1(e.target.value)}>
           <option value="">-- Pilih kategori --</option>
-          {KLASIFIKASI.map((g) => (
-            <optgroup key={g.kelompok} label={g.kelompok}>
-              {g.items.map((k) => <option key={k.kode} value={k.kode}>{k.kode} – {k.nama}</option>)}
-            </optgroup>
-          ))}
+          {KLASIFIKASI.flatMap((g) => g.items).map((k) => <option key={k.kode} value={k.kode}>{k.kode} – {k.nama}</option>)}
         </select>
       </F>
 

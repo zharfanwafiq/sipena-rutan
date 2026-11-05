@@ -131,7 +131,7 @@ export default function Gen({ me, hist, toast, onSaved }) {
           <>
             <div className="pop rounded-3xl bg-navy p-6 text-center text-white">
               <div className="text-xs font-semibold text-white/60">{saved.jenis}</div>
-              <div className="mt-3 break-all font-mono text-lg font-bold text-acc">{saved.nomor}</div>
+              <div className="mt-3 break-all font-mono text-lg font-bold text-white">{saved.nomor}</div>
             </div>
             <dl className="mt-4 space-y-2 text-sm">
               {[['Nomor urut', saved.n], ['Tahun', saved.tahun], ['Pembuat', displayName(me.email)], ['Perihal', saved.perihal || '-']].map((r) => (
