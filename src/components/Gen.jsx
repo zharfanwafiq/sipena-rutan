@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react'
 import { JENIS, SIFAT, nextN, copy } from '../lib/surat'
-import { createSurat } from '../lib/api'
+import { createSurat, fetchHistory } from '../lib/api'
 import { F, Ic } from './ui'
 import KlasifikasiPicker from './KlasifikasiPicker'
 import { displayName } from '../lib/akun'
@@ -19,7 +19,7 @@ export default function Gen({ me, hist, toast, onSaved }) {
   const isAdmin = me.role === 'admin'
 
   const d = JENIS.find((x) => x[0] === j)
-  const auto = j && k ? nextN(hist, k, y) : ''   // nomor urut per kode klasifikasi
+  const auto = j && k ? nextN(hist, k, y, j) : ''   // nomor urut per kode klasifikasi
   const n = man ? nm : auto
 
   const save = async () => {
@@ -36,13 +36,27 @@ export default function Gen({ me, hist, toast, onSaved }) {
     setBusy(true)
     try {
       // Auto: server menghitung max+1 secara atomik. Manual: server menolak jika nomor sudah terpakai.
-      const rec = await createSurat({ jenis: j, tahun: y, kode: k.trim(), sifat: z, perihal: per.trim(), manualN: N })
+      // Nomor otomatis dihitung dari riwayat. Bila bentrok karena orang lain baru saja mengambil nomor yang sama,
+      // ambil riwayat terbaru lalu coba lagi dengan nomor berikutnya (maks 5x). Mode manual tidak diulang.
+      const isDup = (e) => /sudah|terpakai|duplicate|unique|conflict|23505/i.test((e?.message || '') + (e?.code || ''))
+      let rec, nUse = N
+      for (let t = 0; ; t++) {
+        try {
+          rec = await createSurat({ jenis: j, tahun: y, kode: k.trim(), sifat: z, perihal: per.trim(), manualN: man ? nUse : null })
+          break
+        } catch (e) {
+          if (man || !isDup(e) || t >= 4) throw e
+          nUse = nextN(await fetchHistory(), k.trim(), y, j)
+        }
+      }
       setSaved({ nomor: rec.nomor, jenis: rec.jenis, n: rec.n, tahun: rec.tahun, perihal: rec.perihal })
       setPer(''); setMan(false); setNm('')
       await onSaved()
       toast('Nomor Surat Berhasil Disimpan: ' + rec.nomor)
     } catch (e) {
-      toast(e.message || 'Gagal menyimpan nomor surat', 1)
+      toast(/sudah|terpakai|duplicate|unique|23505/i.test((e?.message || '') + (e?.code || ''))
+        ? 'Nomor sudah diambil pengguna lain. Daftar nomor diperbarui, silakan coba lagi.' : (e.message || 'Gagal menyimpan nomor surat'), 1)
+      onSaved()
     } finally {
       setBusy(false)
     }

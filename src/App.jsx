@@ -9,6 +9,8 @@ import Gen from './components/Gen'
 import Hist from './components/Hist'
 import Akun from './components/Akun'
 
+const IDLE_MINUTES = 30   // batas tidak aktif sebelum diminta login ulang
+
 // [id, label, ikon, khususAdmin]
 const NAV = [['dash', 'Dashboard', 'LayoutDashboard', 0], ['riwayat', 'Riwayat', 'History', 0], ['akun', 'Manajemen Akun', 'Users', 1]]
 
@@ -38,6 +40,28 @@ export default function App() {
     window.addEventListener('keydown', k)
     return () => window.removeEventListener('keydown', k)
   }, [])
+
+  // Sesi berakhir otomatis jika tidak ada aktivitas (atau web tidak dibuka) selama IDLE_MINUTES
+  useEffect(() => {
+    const KEY = 'sipena_last_active', IDLE_MS = IDLE_MINUTES * 60 * 1000
+    const get = () => { try { return Number(localStorage.getItem(KEY)) || 0 } catch { return 0 } }
+    const put = () => { try { localStorage.setItem(KEY, String(Date.now())) } catch {} }
+    const clear = () => { try { localStorage.removeItem(KEY) } catch {} }
+    if (!session?.user?.id) { clear(); return }
+    const expired = () => { const l = get(); return l && Date.now() - l > IDLE_MS }
+    const expire = () => { clear(); signOut(); toast('Sesi berakhir karena tidak ada aktivitas. Silakan login kembali.', 1) }
+    if (expired()) { expire(); return }
+    put()
+    let last = Date.now()
+    const act = () => { if (Date.now() - last > 5000) { last = Date.now(); put() } }
+    const check = () => { if (expired()) expire() }
+    const vis = () => { if (document.visibilityState === 'visible') check() }
+    const evs = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart']
+    evs.forEach((e) => window.addEventListener(e, act, { passive: true }))
+    document.addEventListener('visibilitychange', vis)
+    const iv = setInterval(check, 30000)
+    return () => { evs.forEach((e) => window.removeEventListener(e, act)); document.removeEventListener('visibilitychange', vis); clearInterval(iv) }
+  }, [session?.user?.id, toast])
 
   // 1) Sesi Supabase Auth
   useEffect(() => {

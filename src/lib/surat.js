@@ -19,8 +19,11 @@ export const kodeOf = (nomor) =>
   String(nomor || '').split('/').slice(1).find((s) => s.includes('.') && /[A-Za-z]/.test(s)) || ''
 
 // Nomor urut dimulai dari 1 untuk setiap kode klasifikasi (per tahun), tidak tergantung jenis surat.
-export const nextN = (hist, kode, y) =>
-  Math.max(0, ...hist.filter((r) => kodeOf(r.nomor) === kode && +r.tahun === +y).map((r) => r.n)) + 1
+// Jenis yang nomornya tidak memuat tahun (mis. Surat Tugas) tidak direset per tahun, agar nomor lengkap tidak kembar.
+export const nextN = (hist, kode, y, jenis) => {
+  const pakaiTahun = JENIS.find((x) => x[0] === jenis)?.[1] !== 0
+  return Math.max(0, ...hist.filter((r) => kodeOf(r.nomor) === kode && (!pakaiTahun || +r.tahun === +y)).map((r) => r.n)) + 1
+}
 
 export const fmtD = (t) => new Date(t).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })
 
