@@ -18,6 +18,17 @@ export default function Gen({ me, hist, toast, onSaved }) {
   const [saved, setSaved] = useState(null)   // preview hanya muncul setelah nomor disimpan
   const isAdmin = me.role === 'admin'
 
+  // Ringkasan singkat di atas dashboard
+  const now = new Date()
+  const tahunIni = hist.filter((r) => new Date(r.tgl).getFullYear() === y)
+  const bulanIni = tahunIni.filter((r) => new Date(r.tgl).getMonth() === now.getMonth())
+  const hariIni = bulanIni.filter((r) => new Date(r.tgl).getDate() === now.getDate())
+  const stats = [
+    ['Surat tahun ' + y, tahunIni.length, 'bg-navy text-white'],
+    ['Bulan ini', bulanIni.length, 'bg-acc text-accfg'],
+    ['Hari ini', hariIni.length, 'bg-card'],
+  ]
+
   const d = JENIS.find((x) => x[0] === j)
   const auto = j && k ? nextN(hist, k, y, j) : ''   // nomor urut per kode klasifikasi
   const n = man ? nm : auto
@@ -63,9 +74,18 @@ export default function Gen({ me, hist, toast, onSaved }) {
   }
 
   return (
-    <div className="grid gap-5 lg:grid-cols-2">
-      <div className="rounded-xl border border-bd bg-card p-5">
-        <h2 className="mb-4 flex items-center gap-2 font-bold"><Ic n="FileText" s={18} /> Generator Nomor Surat</h2>
+    <div className="space-y-4 md:space-y-5">
+    <div className="grid grid-cols-3 gap-2 md:gap-4">
+      {stats.map((x) => (
+        <div key={x[0]} className={'rounded-3xl p-4 md:p-5 ' + x[2]}>
+          <div className="text-[11px] font-medium leading-tight opacity-70 md:text-xs">{x[0]}</div>
+          <div className="mt-2 text-3xl font-light leading-none md:text-4xl">{x[1]}</div>
+        </div>
+      ))}
+    </div>
+    <div className="grid gap-4 md:gap-5 lg:grid-cols-2">
+      <div className="card">
+        <h2 className="mb-5 flex items-center gap-3 text-lg font-semibold"><span className="grid h-9 w-9 place-items-center rounded-full bg-acc text-accfg"><Ic n="FileText" s={18} /></span> Generator Nomor Surat</h2>
         <div className="space-y-4">
           <F l="Jenis Surat">
             <select className="inp" value={j} onChange={(e) => { setJ(e.target.value); setZ(''); setK(''); setMan(false); setNm(''); setSaved(null) }}>
@@ -105,13 +125,13 @@ export default function Gen({ me, hist, toast, onSaved }) {
         </div>
       </div>
 
-      <div className="h-fit rounded-xl border border-bd bg-card p-5">
-        <h2 className="mb-4 flex items-center gap-2 font-bold"><Ic n="Eye" s={18} /> Live Preview</h2>
+      <div className="card h-fit">
+        <h2 className="mb-5 flex items-center gap-3 text-lg font-semibold"><span className="grid h-9 w-9 place-items-center rounded-full bg-chip"><Ic n="Eye" s={18} /></span> Live Preview</h2>
         {saved ? (
           <>
-            <div className="pop rounded-lg bg-soft p-5 text-center">
-              <div className="text-xs font-semibold text-mut">{saved.jenis}</div>
-              <div className="mt-2 break-all font-mono text-lg font-bold text-pri">{saved.nomor}</div>
+            <div className="pop rounded-3xl bg-navy p-6 text-center text-white">
+              <div className="text-xs font-semibold text-white/60">{saved.jenis}</div>
+              <div className="mt-3 break-all font-mono text-lg font-bold text-acc">{saved.nomor}</div>
             </div>
             <dl className="mt-4 space-y-2 text-sm">
               {[['Nomor urut', saved.n], ['Tahun', saved.tahun], ['Pembuat', displayName(me.email)], ['Perihal', saved.perihal || '-']].map((r) => (
@@ -123,9 +143,10 @@ export default function Gen({ me, hist, toast, onSaved }) {
             <button className="btn btn2 mt-4 w-full" onClick={() => copy(saved.nomor, toast)}><Ic n="Copy" s={16} /> Salin Nomor</button>
           </>
         ) : (
-          <div className="rounded-lg bg-soft p-5 text-center text-sm text-mut">Preview nomor surat akan muncul setelah Anda menekan tombol <b>Simpan Nomor Surat</b>.</div>
+          <div className="rounded-3xl bg-soft p-6 text-center text-sm text-mut">Preview nomor surat akan muncul setelah Anda menekan tombol <b>Simpan Nomor Surat</b>.</div>
         )}
       </div>
+    </div>
     </div>
   )
 }

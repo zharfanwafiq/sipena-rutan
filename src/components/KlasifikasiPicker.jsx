@@ -54,7 +54,7 @@ export default function KlasifikasiPicker({ onChange }) {
       </F>}
 
       {kode && (
-        <p className="fade-up rounded-lg bg-soft px-3 py-2 text-sm">
+        <p className="fade-up rounded-2xl bg-soft px-4 py-3 text-sm">
           Kode terpilih: <b className="font-mono text-pri">{kode}</b>
           <span className="text-mut"> — {r ? r.nama : sub.nama}</span>
         </p>

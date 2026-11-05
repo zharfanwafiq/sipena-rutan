@@ -5,7 +5,7 @@ module.exports = {
     extend: {
       colors: {
         bg: 'var(--bg)', card: 'var(--card)', fg: 'var(--fg)', mut: 'var(--mut)',
-        bd: 'var(--bd)', pri: 'var(--pri)', soft: 'var(--soft)', navy: '#0f2a5c',
+        bd: 'var(--bd)', pri: 'var(--pri)', soft: 'var(--soft)', chip: 'var(--chip)', acc: 'var(--acc)', accfg: 'var(--accfg)', navy: 'var(--ink)',
       },
     },
   },

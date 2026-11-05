@@ -16,17 +16,18 @@ export const F = ({ l, children, hint }) => (
 
 export const Modal = ({ title, children, onClose }) => (
   <div className="fade-in fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-    <div className="pop w-full max-w-sm rounded-xl bg-card p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
-      <h3 className="mb-3 font-bold">{title}</h3>{children}
+    <div className="pop w-full max-w-sm rounded-[28px] bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <h3 className="mb-4 text-lg font-semibold">{title}</h3>{children}
     </div>
   </div>
 )
 
 export const Toasts = ({ list }) => (
-  <div className="fixed right-4 top-4 z-50 space-y-2">
+  <div className="pointer-events-none fixed inset-x-4 top-4 z-[70] space-y-2 md:inset-x-auto md:right-4">
     {list.map((t) => (
-      <div key={t.id} className={'slide-in flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-white shadow-lg ' + (t.err ? 'bg-red-600' : 'bg-emerald-600')}>
-        <Ic n={t.err ? 'X' : 'Check'} s={16} />{t.msg}
+      <div key={t.id} className="slide-in pointer-events-auto ml-auto flex w-fit max-w-full items-center gap-3 rounded-full bg-navy py-2 pl-2 pr-5 text-sm font-medium text-white shadow-xl">
+        <span className={'grid h-7 w-7 shrink-0 place-items-center rounded-full ' + (t.err ? 'bg-red-500 text-white' : 'bg-acc text-accfg')}><Ic n={t.err ? 'X' : 'Check'} s={14} /></span>
+        <span className="min-w-0">{t.msg}</span>
       </div>
     ))}
   </div>
@@ -87,9 +88,9 @@ export function NetworkGuard() {
 
   if (down) return (
     <LogoLoader text="Menghubungkan kembali..." sub="Jaringan tidak dapat diakses atau sangat lambat. Aplikasi akan lanjut otomatis begitu koneksi kembali.">
-      <button className="btn btn2 mt-2 !text-white" onClick={ping}>Coba lagi</button>
+      <button className="btn mt-2" onClick={ping}>Coba lagi</button>
     </LogoLoader>
   )
-  if (slow) return <div className="slide-down fixed inset-x-0 top-0 z-50 bg-amber-500 px-4 py-1.5 text-center text-xs font-semibold text-black">Koneksi internet lambat, proses mungkin memakan waktu lebih lama.</div>
+  if (slow) return <div className="slide-down fixed inset-x-0 top-0 z-50 bg-acc px-4 py-2 text-center text-xs font-bold text-accfg">Koneksi internet lambat, proses mungkin memakan waktu lebih lama.</div>
   return null
 }

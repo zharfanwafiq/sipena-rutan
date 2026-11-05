@@ -110,6 +110,8 @@ export default function App() {
 
   const nav = NAV.filter((n) => !n[3] || me.role === 'admin')   // UI guard; keamanan sebenarnya di RLS + API Route
   const cur = nav.find((n) => n[0] === page) || nav[0]
+  const isHist = cur[0] === 'riwayat'
+  const nama = displayName(me.email)
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -117,48 +119,60 @@ export default function App() {
       <div onClick={() => setDrawer(false)}
         className={'fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 md:hidden ' + (drawer ? 'opacity-100' : 'pointer-events-none opacity-0')} />
 
-      {/* Sidebar: HP = laci geser dari kiri (tertutup default), desktop = panel biasa */}
+      {/* Sidebar: HP = laci geser dari kiri (tertutup default), desktop = panel melayang */}
       <aside
-        className={'fixed inset-y-0 left-0 z-50 flex w-64 overflow-hidden bg-navy text-white shadow-2xl transition-[transform,width] duration-300 ease-in-out md:static md:z-auto md:shrink-0 md:translate-x-0 md:shadow-none ' +
-          (drawer ? 'translate-x-0 ' : '-translate-x-full ') + (side ? 'md:w-60' : 'md:w-0')}>
-        <div className={'flex w-64 shrink-0 flex-col transition-opacity duration-300 md:w-60 ' + (side ? 'opacity-100' : 'md:opacity-0')}>
-        <div className="flex items-center gap-2 px-4 py-4 md:py-5">
+        className={'fixed inset-y-0 left-0 z-50 flex w-72 overflow-hidden rounded-r-[28px] bg-navy text-white shadow-2xl transition-[transform,width,margin] duration-300 ease-in-out md:sticky md:top-4 md:z-auto md:mt-4 md:h-[calc(100vh-2rem)] md:shrink-0 md:translate-x-0 md:rounded-[28px] md:shadow-none ' +
+          (drawer ? 'translate-x-0 ' : '-translate-x-full ') + (side ? 'md:ml-4 md:w-60' : 'md:ml-0 md:w-0')}>
+        <div className={'flex w-72 shrink-0 flex-col transition-opacity duration-300 md:w-60 ' + (side ? 'opacity-100' : 'md:opacity-0')}>
+        <div className="flex items-center gap-3 px-5 py-5 md:py-6">
           <img src="/logo.svg" alt="Logo" className="logo-side" />
-          <div className="min-w-0 flex-1"><div className="font-extrabold leading-tight">SIPENA-RUTAN</div><div className="text-[11px] text-white/60">Sistem Pengelolaan Persuratan dan Naskah Dinas Rutan</div></div>
-          <button className="rounded p-1 text-white/70 hover:bg-white/10 md:hidden" aria-label="Tutup menu" onClick={() => setDrawer(false)}><Ic n="X" s={18} /></button>
+          <div className="min-w-0 flex-1"><div className="font-extrabold leading-tight">SIPENA-RUTAN</div><div className="text-[11px] leading-snug text-white/60">Sistem Pengelolaan Persuratan dan Naskah Dinas Rutan</div></div>
+          <button className="grid h-9 w-9 place-items-center rounded-full text-white/70 hover:bg-white/10 md:hidden" aria-label="Tutup menu" onClick={() => setDrawer(false)}><Ic n="X" s={18} /></button>
         </div>
-        <nav className="flex flex-col gap-1 px-3">
+        <nav className="flex flex-col gap-1.5 px-3">
           {nav.map((n, i) => (
             <button key={n[0]} onClick={() => { setPage(n[0]); setDrawer(false) }}
               style={{ transitionDelay: drawer ? i * 50 + 120 + 'ms' : '0ms' }}
-              className={'flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-300 md:!translate-x-0 md:!opacity-100 ' + (drawer ? 'translate-x-0 opacity-100 ' : '-translate-x-4 opacity-0 ') + (cur[0] === n[0] ? 'bg-white/15' : 'text-white/75 hover:bg-white/10')}>
+              className={'flex items-center gap-3 whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold transition-all duration-300 md:!translate-x-0 md:!opacity-100 ' +
+                (n[0] === 'riwayat' ? 'max-md:hidden ' : '') +   // di HP, Riwayat dipindah ke ikon kanan atas
+                (drawer ? 'translate-x-0 opacity-100 ' : '-translate-x-4 opacity-0 ') +
+                (cur[0] === n[0] ? 'bg-acc text-accfg' : 'text-white/75 hover:bg-white/10')}>
               <Ic n={n[2]} s={18} />{n[1]}
             </button>
           ))}
         </nav>
         {/* Akun + logout: hanya di menu HP */}
-        <div className="mt-auto border-t border-white/10 p-4 md:hidden">
-          <div className="mb-3 min-w-0">
-            <div className="truncate text-sm font-semibold">{displayName(me.email)}</div>
-            <div className="text-xs text-white/60">{me.role === 'admin' ? 'Admin' : 'Operator'}</div>
+        <div className="mt-auto p-4 md:hidden">
+          <div className="mb-3 flex items-center gap-3 rounded-2xl bg-white/5 p-3">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-acc text-sm font-extrabold text-accfg">{nama.charAt(0).toUpperCase()}</span>
+            <div className="min-w-0">
+              <div className="truncate text-sm font-semibold">{nama}</div>
+              <div className="text-xs text-white/60">{me.role === 'admin' ? 'Admin' : 'Operator'}</div>
+            </div>
           </div>
-          <button className="btn w-full !bg-white/10 hover:!bg-white/20" onClick={() => signOut()}><Ic n="LogOut" s={16} /> Logout</button>
+          <button className="btn w-full !bg-white/10 !text-white hover:!bg-white/20" onClick={() => signOut()}><Ic n="LogOut" s={16} /> Logout</button>
         </div>
         </div>
       </aside>
 
-      <div className="min-w-0 flex-1">
-        <header className="flex items-center justify-between border-b border-bd bg-card px-5 py-3">
-          <div className="flex items-center gap-3">
-            <button className="ib" title="Menu" aria-label="Toggle menu" onClick={toggleMenu}><Ic n="Menu" s={20} /></button>
-            <h1 className="font-bold">{cur[1]}</h1>
-          </div>
-          <div className="hidden items-center gap-3 md:flex">
-            <div className="text-right text-sm"><div className="font-semibold leading-tight">{displayName(me.email)}</div><div className="text-xs text-mut">{me.role === 'admin' ? 'Admin' : 'Operator'}</div></div>
-            <button className="btn btn2" onClick={() => signOut()}><Ic n="LogOut" s={16} /> Logout</button>
+      <div className="min-w-0 flex-1 px-4 pb-8 pt-4 md:px-8 md:pt-6">
+        <header className="mb-5 flex items-center justify-between gap-3">
+          <button className="rb" title="Menu" aria-label="Buka atau tutup menu" onClick={toggleMenu}><Ic n="Menu" s={20} /></button>
+          <div className="flex items-center gap-2">
+            {/* HP: tombol Riwayat berupa ikon di sudut kanan atas */}
+            <button className="rb md:hidden" title="Riwayat" aria-label={isHist ? 'Kembali ke Dashboard' : 'Buka Riwayat'} aria-pressed={isHist}
+              onClick={() => setPage(isHist ? 'dash' : 'riwayat')}><Ic n="History" s={20} /></button>
+            <div className="hidden items-center gap-3 md:flex">
+              <div className="flex items-center gap-3 rounded-full bg-card py-1.5 pl-1.5 pr-5">
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-acc text-sm font-extrabold text-accfg">{nama.charAt(0).toUpperCase()}</span>
+                <div className="text-sm leading-tight"><div className="font-semibold">{nama}</div><div className="text-xs text-mut">{me.role === 'admin' ? 'Admin' : 'Operator'}</div></div>
+              </div>
+              <button className="btn btn2 !bg-card" onClick={() => signOut()}><Ic n="LogOut" s={16} /> Logout</button>
+            </div>
           </div>
         </header>
-        <main key={cur[0]} className="fade-up p-5">
+        <h1 className="mb-5 text-[2rem] font-light leading-none tracking-tight md:text-4xl">{cur[1]}</h1>
+        <main key={cur[0]} className="fade-up">
           {cur[0] === 'dash' && <Gen me={me} hist={hist} toast={toast} onSaved={loadHist} />}
           {cur[0] === 'riwayat' && <Hist hist={hist} loading={histLoading} me={me} reload={loadHist} toast={toast} ask={ask} />}
           {cur[0] === 'akun' && <Akun toast={toast} ask={ask} />}

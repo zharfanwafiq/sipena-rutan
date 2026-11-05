@@ -46,7 +46,7 @@ export default function Hist({ hist, loading, me, reload, toast, ask }) {
   })
 
   return (
-    <div className="rounded-xl border border-bd bg-card p-5">
+    <div className="card-md">
       <div className="mb-4 space-y-3">
         <div className="flex items-end gap-2 md:hidden">
           <div className="min-w-0 flex-1">
@@ -57,7 +57,7 @@ export default function Hist({ hist, loading, me, reload, toast, ask }) {
             </div>
           </div>
           <button className={'btn shrink-0 ' + (showF ? '' : 'btn2')} onClick={() => setShowF((v) => !v)} aria-expanded={showF}>
-            <Ic n="Filter" s={16} /> Kategorikan{(dfrom || dto || fj) ? ' •' : ''}
+            <Ic n="Filter" s={16} /> Filter{(dfrom || dto || fj) ? ' •' : ''}
           </button>
         </div>
 
@@ -85,22 +85,25 @@ export default function Hist({ hist, loading, me, reload, toast, ask }) {
       {loading ? <Spinner /> : (
         <>
         {/* HP: daftar ringkas (tanggal, nomor, perihal), ketuk untuk detail */}
-        <ul className="space-y-2 md:hidden">
+        <ul className="space-y-3 md:hidden">
           {rows.length ? rows.map((r) => {
             const o = open === r.id
             return (
-              <li key={r.id} className="fade-up overflow-hidden rounded-lg border border-bd">
-                <button className="flex w-full items-start gap-2 p-3 text-left" onClick={() => setOpen(o ? null : r.id)} aria-expanded={o}>
+              <li key={r.id} className={'fade-up overflow-hidden rounded-3xl transition-colors ' + (o ? 'bg-card ring-2 ring-fg/80' : 'bg-card')}>
+                <button className="flex w-full items-start gap-3 p-4 text-left" onClick={() => setOpen(o ? null : r.id)} aria-expanded={o}>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[11px] text-mut">{fmtD(r.tgl)}</div>
-                    <div className="break-all font-mono text-xs font-semibold text-pri">{r.nomor}</div>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span className="chip">{r.jenis}</span>
+                      <span className="text-[11px] text-mut">{fmtD(r.tgl)}</span>
+                    </div>
+                    <div className="mt-2 break-all font-mono text-xs font-bold">{r.nomor}</div>
                     <div className={'mt-1 text-sm ' + (o ? 'whitespace-pre-wrap break-words' : 'line-clamp-2')}>{r.perihal}</div>
                   </div>
-                  <span className={'mt-1 shrink-0 text-mut transition-transform duration-300 ' + (o ? 'rotate-180' : '')}><Ic n="ChevronDown" s={18} /></span>
+                  <span className={'mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-chip text-mut transition-transform duration-300 ' + (o ? 'rotate-180' : '')}><Ic n="ChevronDown" s={16} /></span>
                 </button>
                 <div className={'grid transition-all duration-300 ' + (o ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]')}>
                   <div className="overflow-hidden">
-                    <dl className="space-y-1.5 border-t border-bd bg-soft/50 p-3 text-sm">
+                    <dl className="space-y-2 bg-soft p-4 text-sm">
                       {[['Pembuat', r.by], ['Jenis Surat', r.jenis], ['Tahun', r.tahun], ['Nomor Urut', r.n]].map((x) => (
                         <div key={x[0]} className="flex justify-between gap-4"><dt className="text-mut">{x[0]}</dt><dd className="text-right font-medium">{x[1]}</dd></div>
                       ))}
@@ -118,14 +121,14 @@ export default function Hist({ hist, loading, me, reload, toast, ask }) {
 
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[1100px]">
-            <thead className="border-b border-bd">
+            <thead>
               <tr>{['No', 'Tanggal Dibuat', 'Pembuat', 'Jenis Surat', 'Nomor Surat', 'Perihal', 'Aksi'].map((c) => <th key={c} className={c === 'Perihal' ? 'min-w-[380px] w-[40%]' : ''}>{c}</th>)}</tr>
             </thead>
             <tbody>
               {rows.length ? rows.map((r, i) => (
-                <tr key={r.id} className="fade-up border-b border-bd transition-colors hover:bg-soft/60">
-                  <td>{i + 1}</td><td className="whitespace-nowrap">{fmtD(r.tgl)}</td><td>{r.by}</td><td>{r.jenis}</td>
-                  <td className="font-mono text-xs font-semibold text-pri">{r.nomor}</td><td className="min-w-[380px] whitespace-pre-wrap break-words text-[0.95rem] leading-relaxed">{r.perihal}</td>
+                <tr key={r.id} className="fade-up border-t border-bd transition-colors hover:bg-soft">
+                  <td>{i + 1}</td><td className="whitespace-nowrap">{fmtD(r.tgl)}</td><td>{r.by}</td><td><span className="chip">{r.jenis}</span></td>
+                  <td className="font-mono text-xs font-bold">{r.nomor}</td><td className="min-w-[380px] whitespace-pre-wrap break-words text-[0.95rem] leading-relaxed">{r.perihal}</td>
                   <td className="whitespace-nowrap">
                     <button className="ib" title="Salin" onClick={() => copy(r.nomor, toast)}><Ic n="Copy" s={16} /></button>
                     {isAdmin && (
@@ -139,7 +142,7 @@ export default function Hist({ hist, loading, me, reload, toast, ask }) {
         </div>
         </>
       )}
-      <p className="mt-3 text-xs text-mut">Menampilkan {rows.length} dari {hist.length} data.</p>
+      <p className="mt-4 px-1 text-xs text-mut">Menampilkan {rows.length} dari {hist.length} data.</p>
     </div>
   )
 }

@@ -66,8 +66,8 @@ export default function Akun({ toast, ask }) {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-xl border border-bd bg-card p-5">
-        <h2 className="mb-3 flex items-center gap-2 font-bold"><Ic n="UserPlus" s={18} /> Tambah Akun Operator</h2>
+      <div className="card">
+        <h2 className="mb-4 flex items-center gap-3 text-lg font-semibold"><span className="grid h-9 w-9 place-items-center rounded-full bg-acc text-accfg"><Ic n="UserPlus" s={18} /></span> Tambah Akun Operator</h2>
         <div className="flex flex-wrap items-end gap-3">
           <div className="min-w-[160px] flex-1"><label className="lb">Username</label>
             <input className="inp" type="text" autoCapitalize="none" autoComplete="off" placeholder="mis. operator1" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
@@ -77,7 +77,7 @@ export default function Akun({ toast, ask }) {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-bd bg-card p-5">
+      <div className="card overflow-x-auto">
         {loading ? <Spinner /> : (
           <table className="w-full min-w-[520px]">
             <thead className="border-b border-bd"><tr>{['No', 'Username', 'Role', 'Dibuat', 'Aksi'].map((c) => <th key={c}>{c}</th>)}</tr></thead>
@@ -85,7 +85,7 @@ export default function Akun({ toast, ask }) {
               {users.map((a, i) => (
                 <tr key={a.id} className="border-b border-bd">
                   <td>{i + 1}</td><td className="font-semibold">{displayName(a.email)}</td>
-                  <td><span className={'rounded-full px-2 py-0.5 text-xs font-semibold ' + (a.role === 'admin' ? 'bg-pri text-white' : 'bg-soft text-pri')}>{a.role === 'admin' ? 'Admin' : 'Operator'}</span></td>
+                  <td><span className={'chip ' + (a.role === 'admin' ? 'chip-acc' : '')}>{a.role === 'admin' ? 'Admin' : 'Operator'}</span></td>
                   <td>{fmtD(a.created_at)}</td>
                   <td className="whitespace-nowrap">
                     <button className="ib" title="Ubah password" onClick={() => { setEd(a); setNp('') }}><Ic n="Pencil" s={16} /></button>
